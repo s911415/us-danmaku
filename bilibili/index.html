@@ -19,7 +19,7 @@
     #intro { border: 2px solid #F25D8E; float: left; height: 80px; line-height: 40px; font-size: 20px; padding: 18px; background: #f8f8f8; border-radius: 8px; margin-left: 30px; color: #333; }
     #intro strong { color: #000; font-weight: normal; }
     #side-buttons { width: 400px; height: 160px; float: right; padding: 0; text-align: right; margin-right: 30px; }
-    #convert { background: #F25D8E; color: #fff; font-size: 32px; line-height: 50px; padding: 10px 50px; width: 300px; clear: both; display: block; float: right; text-align: center; }
+    #convert {  border: none; width: 100%;background: #F25D8E; color: #fff; font-size: 32px; line-height: 50px; padding: 10px 50px; clear: both; display: block; float: right; text-align: center; }
     #convert:hover { background: #f32b6d; }
     #report { float: right; width: 100%; height: 70px; padding: 20px 0 0; display: block; font-size: 16px; }
     #report1, #report2 { height: 80px; width: 48%; display: block; }
@@ -38,6 +38,51 @@
     ul { margin: 0; }
     .addon { display: block; height: 80px; line-height: 80px; font-size: 24px; background: black; text-align: center; color: white; display: none; }
     .addon a { color: #F25D8E; text-decoration: underline; }
+    .input-container{ margin-bottom: .5rem; display: flex; line-height: 2.5rem; }
+    .input-container label {
+        margin-right: .5rem;
+        flex: 0; 
+    }
+    .input-container input {
+        flex: auto; 
+        font-size: 1.5rem;
+        border: 2px solid #F25D8E;
+        border-radius: .5rem;
+        padding: 0px .5rem;
+        outline: none;
+        box-sizing: border-box; 
+    }
+    #video-info {
+        display: none;
+    }
+    #video-wrapper {
+        display: flex;
+    }
+    #video-img-container {
+        flex: none;
+        width: 280px;
+        margin-right: 1rem;
+        border-radius: .25rem;
+        overflow: hidden;
+        line-height: 0;
+    }
+    #video-img {
+        width: 100%;
+    }
+    .video-description-container {
+        margin-left: 1rem;
+        flex: auto;
+    }
+    #video-title {
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #video-title:hover {
+        text-decoration: underline;
+    }
+    #video-description {
+        white-space: pre;
+    }
   </style>
   <script> var GM_xmlhttpRequest = GM_addStyle = function () { }; </script>
   <script src="bilibili_ASS_Danmaku_Downloader.user.js"></script>
@@ -63,10 +108,29 @@
         以 ASS 格式下载 bilibili 视频弹幕<br />
         兼容 libass 和 VSFilter 的 ASS 格式解析器<br />
       </div>
-      <div id="side-buttons">
-        <label title="上传下载好的 XML 文件在线转换"><span id="convert">在线转换</span><input id="upload" style="display:none" type="file" /></label>
-      </div>
+      <form id="side-buttons">
+        <div class="input-container">
+          <label for="aid">AID:</label>
+          <input type="text" id="aid" pattern="^(av|AV)?\d+$" name="aid" required/>
+        </div>
+        <button title="在线转换" id="convert" type="submit">转换</button>
+      </form>
     </header>
+    
+    <div id="video-info">
+      <h3>视频消息</h3>
+      <div class="in">
+        <div id="video-wrapper">
+          <a id="video-img-container" target="_blank">
+            <img id="video-img" src=""/>
+          </a>
+          <div class="video-description-container">
+            <a id="video-title" target="_blank"></a>
+            <p id="video-description"></p>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <h3>在线转换</h3>
     <div class="in">
