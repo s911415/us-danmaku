@@ -111,7 +111,7 @@
       <form id="side-buttons">
         <div class="input-container">
           <label for="aid">AID:</label>
-          <input type="text" id="aid" pattern="^(av|AV)?\d+$" name="aid" required/>
+          <input type="text" id="aid" pattern=".*?(AV|av)\d+[\D]*?" name="aid" required autofocus/>
         </div>
         <button title="在线转换" id="convert" type="submit">转换</button>
       </form>
