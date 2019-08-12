@@ -55,10 +55,10 @@
     #video-info {
         display: none;
     }
-    #video-wrapper {
+    .video-wrapper {
         display: flex;
     }
-    #video-img-container {
+    .video-img-container {
         flex: none;
         width: 280px;
         margin-right: 1rem;
@@ -66,21 +66,21 @@
         overflow: hidden;
         line-height: 0;
     }
-    #video-img {
+    .video-img {
         width: 100%;
     }
     .video-description-container {
         margin-left: 1rem;
         flex: auto;
     }
-    #video-title {
+    .video-title {
         font-weight: bold;
         cursor: pointer;
     }
-    #video-title:hover {
+    .video-title:hover {
         text-decoration: underline;
     }
-    #video-description {
+    .video-description {
         white-space: pre-wrap;
     }
   </style>
@@ -119,14 +119,14 @@
     
     <div id="video-info">
       <h3>视频消息</h3>
-      <div class="in">
-        <div id="video-wrapper">
-          <a id="video-img-container" target="_blank">
-            <img id="video-img" src=""/>
+      <div class="in" id="template">
+        <div class="video-wrapper">
+          <a class="video-img-container" target="_blank">
+            <img class="video-img" src=""/>
           </a>
           <div class="video-description-container">
-            <a id="video-title" target="_blank"></a>
-            <p id="video-description"></p>
+            <a class="video-title" target="_blank"></a>
+            <p class="video-description"></p>
           </div>
         </div>
       </div>
