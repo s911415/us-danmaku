@@ -11,8 +11,10 @@ var showVideoInfo = function(data, base) {
   document.title = data.title + ' | ' + ORIGINAL_DOC_TITLE;
   
   let paramAid = new URLSearchParams(location.search).get('aid');
-  if(typeof paramAid!=='string' || paramAid.includes(''+data.aid))
-    history.pushState({}, document.title, "?aid=av" + data.aid);
+  if(typeof paramAid!=='string' || !paramAid.includes('av'+data.aid))
+    history.pushState({
+      aid: 'av' + data.aid
+    }, document.title, "?aid=av" + data.aid);
 };
 
 var parseAidFromStr = (str) => {
@@ -79,4 +81,12 @@ window.addEventListener('load', function() {
       fetchVideoInfo(urlAid);
     }
   }
+  
+  window.onpopstate=function(){
+    let stateAid = history.state.aid;
+    if(stateAid) {
+      sideForm['aid'].value = stateAid;
+      fetchVideoInfo(stateAid);
+    }
+  };
 });
