@@ -9,18 +9,17 @@ var showVideoInfo = function(data, base) {
   base.querySelector('.video-title').textContent = data.title;
   base.querySelector('.video-description').textContent = data.description;
   document.title = data.title + ' | ' + ORIGINAL_DOC_TITLE;
-  
   let paramAid = new URLSearchParams(location.search).get('aid');
-  if(typeof paramAid!=='string' || !paramAid.includes('av'+data.aid))
+  let videoId = data.bvid || ('av' + data.aid);
+  if(typeof paramAid!=='string' || !paramAid.includes(videoId))
     history.pushState({
-      aid: 'av' + data.aid
-    }, document.title, "?aid=av" + data.aid);
+      aid: videoId
+    }, document.title, "?aid=" + videoId);
 };
 
 var parseAidFromStr = (str) => {
-    if(str.match(/^\d+$/)) str = 'av' + str;
-    let m = str.match(/(av\d+)/i);
-    if(m && m.length>1) return m[1].substr(2);
+    let m = str.match(/(av\d+|BV[a-zA-Z0-9]+)/i);
+    if(m && m.length>1) return m[1];
     return null;
 };
 
@@ -40,14 +39,14 @@ window.addEventListener('load', function() {
     let base = document.querySelector('.in');
     window._curVideoInfo = { aid };
     document.querySelector('#video-info').style.display = 'none';
-    base.querySelector('.video-title').href = base.querySelector('.video-img-container').href = 'https://www.bilibili.com/video/av' + aid;
+    let videoLink = 'https://www.bilibili.com/video/' + aid;
+    base.querySelector('.video-title').href = base.querySelector('.video-img-container').href = videoLink;
 
     // This api require modified header
-    return fetch('https://api.bilibili.com/x/article/archives?ids='+encodeURIComponent(aid)+'&cross_domain=true')
+    return fetch('https://api.bilibili.com/x/article/cards?ids='+encodeURIComponent(aid)+'&cross_domain=true')
         .then(r=>r.json())
         .then(z=>z.data[aid])
         .then(d => {
-            d.aid = d.aid.toString();
             Object.assign(window._curVideoInfo, d);
             showVideoInfo(window._curVideoInfo, base);
             return window._curVideoInfo;
