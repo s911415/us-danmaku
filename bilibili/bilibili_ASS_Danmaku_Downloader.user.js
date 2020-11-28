@@ -36,7 +36,7 @@ var config = {
   'font_size': 1.0,          // 字号（比例）
   'r2ltime': 8,              // 右到左弹幕持续时间（秒）
   'fixtime': 4,              // 固定弹幕持续时间（秒）
-  'opacity': 0.6,            // 不透明度（比例）
+  'opacity': .88,            // 不透明度（比例）
   'space': 0,                // 弹幕间隔的最小水平距离（像素）
   'max_delay': 6,            // 最多允许延迟几秒出现弹幕
   'bottom': 50,              // 底端给字幕保留的空间（像素）
@@ -195,6 +195,7 @@ Timer: 10.0000
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Fix,{{font}},18,&H{{alpha}}FFFFFF,&H{{alpha}}FFFFFF,&H{{alpha}}000000,&H{{alpha}}000000,1,0,0,0,100,100,0,0,1,2,0,2,20,20,2,0
 Style: R2L,{{font}},18,&H{{alpha}}FFFFFF,&H{{alpha}}FFFFFF,&H{{alpha}}000000,&H{{alpha}}000000,1,0,0,0,100,100,0,0,1,2,0,2,20,20,2,0
+Style: SRT,{{font}},28,&H00FFFFFF,&H00FFFFFF,&H3F000000,&H3F000000,1,0,0,0,100,100,0,0,1,2,0,2,8,8,10,0
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -244,12 +245,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         line.poss.x, line.poss.y
       ].join(',') + ')';
     };
+    // 适用于cc字幕
+    var srt = function (line) {
+      return '';
+    };
     var withCommon = function (f) {
       return function (line) { return f(line) + common(line); };
     };
     return {
       'R2L': withCommon(r2l),
       'Fix': withCommon(fix),
+      'SRT': withCommon(srt),
     };
   }());
   // 转义一些字符
@@ -264,7 +270,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
       formatTime(line.stime),
       formatTime(line.dtime),
       line.type,
-      ',20,20,2,,',
+      ',0,0,0,,',
     ].join(',')
       + '{' + format[line.type](line) + '}'
       + escapeAssText(line.text);

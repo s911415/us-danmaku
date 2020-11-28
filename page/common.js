@@ -8,6 +8,23 @@ var showVideoInfo = function(data, base) {
   }).then(r=>r.blob()).then(b=>imgTag.src = URL.createObjectURL(b));
   base.querySelector('.video-title').textContent = data.title;
   base.querySelector('.video-description').textContent = data.description;
+  let infoForm = base.querySelector('form.video-info');
+  infoForm.avid.value = data.aid;
+  infoForm.bvid.value = data.bvid;
+  infoForm.cid.value = data.cid;
+  infoForm.subtitle.innerHTML = '';
+  infoForm.subtitle.appendChild(new Option('None', ''));
+  if(data._player && data._player.subtitle && data._player.subtitle.subtitles) {
+    let urlMap = {};
+    data._player.subtitle.subtitles.forEach(subtitle => {
+      let opt = new Option(subtitle.lan_doc, subtitle.subtitle_url);
+      opt._meta = subtitle;
+      infoForm.subtitle.appendChild(opt);
+      urlMap[subtitle.lan] = subtitle.subtitle_url;
+    });
+    
+    infoForm.subtitle.value = urlMap['zh-Hans'] || urlMap['zh-Hant'] || '';
+  }
   document.title = data.title + ' | ' + ORIGINAL_DOC_TITLE;
   let paramAid = new URLSearchParams(location.search).get('aid');
   let videoId = data.bvid || ('av' + data.aid);
@@ -28,7 +45,6 @@ var gotFile = function(name, content) {
   var ass = generateASS(setPosition(danmaku), {
     'title': document.title,
     'ori': name,
-    'alpha': 1,
   });
   startDownload('\ufeff' + ass, name.replace(/\.[^.]*$/, '') + '.ass');
 };
@@ -47,9 +63,15 @@ window.addEventListener('load', function() {
         .then(r=>r.json())
         .then(z=>z.data[aid])
         .then(d => {
-            Object.assign(window._curVideoInfo, d);
-            showVideoInfo(window._curVideoInfo, base);
-            return window._curVideoInfo;
+            let playerInfo = fetch('https://api.bilibili.com/x/player/v2?cid=' + d.cid + '&bvid=' + d.bvid, {
+            }).then(r=>r.json()).then(playerInfo => {
+                Object.assign(window._curVideoInfo, d);
+                window._curVideoInfo._player = playerInfo.code === 0 ? playerInfo.data : null;
+                showVideoInfo(window._curVideoInfo, base);
+                return window._curVideoInfo;
+            });
+            
+            return playerInfo;
         });
   };
 
@@ -70,7 +92,37 @@ window.addEventListener('load', function() {
         gotFile(_curVideoInfo.title, xml);
       })
     });
-
+  });
+  
+  var dlSubtitleBtn = document.querySelector('#convertSubtitleBtn');
+  dlSubtitleBtn.addEventListener('click', function(e) {
+     e.preventDefault();
+     let opt = this.form.subtitle.selectedOptions[0];
+     let url = opt.value;
+     if (!url) return;
+     fetch(url, {
+       referrerPolicy: "no-referrer",
+     }).then(r=>r.json()).then(d=>{
+       let data = d.body.map(line => {
+         return {
+           color: "FFFFFF",
+           bottom: false,
+           dtime: line.to,
+           mode: "SRT",
+           stime: line.from,
+           text: line.content,
+           time: line.from,
+           type: "SRT",
+           loc: line.location,
+           size: 25,
+         }
+       });
+       var ass = generateASS(data, {
+         'title': document.title,
+         'ori': name,
+       });
+      startDownload('\ufeff' + ass, _curVideoInfo.title.replace(/\.[^.]*$/, '') + '.' + opt._meta.lan + '.ass');
+     });
   });
 
   if (window.URLSearchParams) {

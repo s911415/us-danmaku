@@ -83,6 +83,30 @@
     .video-description {
         white-space: pre-wrap;
     }
+    
+    .video-info {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        border-top: 1px solid #CCC;
+    }
+    
+    .video-info>fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+        flex: 1;
+    }
+    
+    .video-info>.hr {
+        width: 100%;
+        margin: .5rem 0;
+    }
+
+    .video-info fieldset label {
+        
+    }
   </style>
   <script> var GM_xmlhttpRequest = GM_addStyle = function () { }; </script>
   <script src="bilibili_ASS_Danmaku_Downloader.user.js"></script>
@@ -129,6 +153,34 @@
             <p class="video-description"></p>
           </div>
         </div>
+        <form class="video-info">
+          <fieldset>
+            <label>
+                <span>AID</span>
+                <input type="text" name="avid">
+            </label>
+          </fieldset>
+          <fieldset>
+            <label>
+              <span>BVID</span>
+              <input type="text" name="bvid">
+            </label>
+          </fieldset>
+          <fieldset>
+            <label for="cid">
+              <span>CID</span>
+              <input type="text" name="cid">
+            </label>
+          </fieldset>
+          <div class="hr"></div>
+          <fieldset>
+            <label for="subtitle">
+              <span>Subtitle</span>
+              <select name="subtitle"></select>
+            </label>
+            <button type="button" id="convertSubtitleBtn">Download</button>
+          </fieldset>
+        </form>
       </div>
     </div>
     
